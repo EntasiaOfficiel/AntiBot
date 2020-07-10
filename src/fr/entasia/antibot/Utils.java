@@ -3,9 +3,7 @@ package fr.entasia.antibot;
 import fr.entasia.antibot.utils.AntibotLevel;
 import fr.entasia.antibot.utils.AntibotMode;
 import fr.entasia.corebungee.Main;
-import fr.entasia.corebungee.antibot.SQLUpdate;
 import fr.entasia.corebungee.utils.BungeePlayer;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Utils {
 
-	public static AntibotLevel level;
+	public static AntibotLevel currentLevel;
 	public static AntibotMode mode;
 
 	public static ArrayList<String> safeList = new ArrayList<>();
@@ -27,8 +25,6 @@ public class Utils {
 	public static void changeLevel(AntibotLevel level){
 		if(level==AntibotLevel.CAPTCHA){
 			safeList.clear();
-
-			update = ProxyServer.getInstance().getScheduler().schedule(Main.main, new SQLUpdate(), 15, TimeUnit.SECONDS);
 
 			for(Map.Entry<String, BungeePlayer> e : Main.playerCache.entrySet()){
 				if(e.getValue().getConnectedTime()>15*60||(new Date().getTime()-e.getValue().lastjointime)/1000>5*60){

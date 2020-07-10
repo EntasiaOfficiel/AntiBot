@@ -1,8 +1,8 @@
 package fr.entasia.antibot.listeners;
 
+import fr.entasia.antibot.utils.AntibotLevel;
 import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.corebungee.Main;
-import fr.entasia.corebungee.antibot.AntibotLevel;
 import fr.entasia.antibot.Utils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.PreLoginEvent;
@@ -42,7 +42,7 @@ public class Base implements Listener {
 					return;
 				}else ips.remove(ip);
 			}
-			if(AntibotLevel.activeMode(AntibotLevel.CAPTCHA)){
+			if(AntibotLevel.activeMode(AntibotLevel.)){
 				String ip = e.getConnection().getAddress().getAddress().getHostAddress();
 				UUID uuid = e.getConnection().getUniqueId();
 				if(!Utils.safeList.contains(uuid)&&!Utils.safeListSQL.get(uuid).equals(ip)){
