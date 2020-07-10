@@ -37,28 +37,50 @@ public class Base implements Listener {
 							"§cAntiBot :",
 							"Une attaque est en cours !",
 							"Les connexions directes au serveur (connexion rapide) ont été temporairement suspendues",
-							"Veuillez ajouter le serveur à votre liste de serveur pour vous connecter")
+							"Ajoute le serveur à ta liste de serveurs pour vous connecter")
 					.create());
 					return;
 				}else ips.remove(ip);
 			}
-			if(AntibotLevel.activeMode(AntibotLevel.)){
-				String ip = e.getConnection().getAddress().getAddress().getHostAddress();
-				UUID uuid = e.getConnection().getUniqueId();
-				if(!Utils.safeList.contains(uuid)&&!Utils.safeListSQL.get(uuid).equals(ip)){
+
+			if(AntibotLevel.activeMode(AntibotLevel.NAME_LEN)){
+				String name = e.getConnection().getName();
+				if(name.length()==16){
+					e.setCancelReason(new ChatComponent(
+							"§cAntiBot :",
+							"Une attaque est en cours !",
+							"Tu as été détecté comme bot par le serveur",
+							"S'il s'agit d'un faux positif, attend la fin de l'attaque pour te connecter (habituellement 2 minutes)")
+							.create());
+				}
+
+			}else if(AntibotLevel.activeMode(AntibotLevel.SAFELIST)){
+				String name = e.getConnection().getName();
+				if(!Utils.safeList.contains(name)){
 					e.setCancelled(true);
 					e.setCancelReason(new ChatComponent(
 							"§cAntiBot :",
 							"Une attaque est en cours !",
-							"Les nouvelles connexions au serveur ont été temporairement suspendues",
-							"Si tu veux te connecter, va sur §bhttps://enta§7sia.fr/captcha-bot")
+							"Les nouvelles connexions au serveur ont été temporairement suspendues")
 					.create());
-					return; // réfléchis pour le warning
+				}
+			}else if(AntibotLevel.activeMode(AntibotLevel.HARD_SAFELIST)){
+				String name = e.getConnection().getName();
+				if(!Utils.safeList.contains(name)){
+					e.setCancelled(true);
+					e.setCancelReason(new ChatComponent(
+							"§cAntiBot :",
+							"Une attaque est en cours !",
+							"Toutes les connexions au serveur ont été désactivées")
+					.create());
 				}
 			}
 		}
-
 	}
+
+	// "Si tu veux te connecter, va sur §bhttps://enta§7sia.fr/captcha.php"
+
+
 	@EventHandler(priority = -128)
 	public void a(ProxyPingEvent e) {
 		if(AntibotLevel.activeMode(AntibotLevel.PING)){

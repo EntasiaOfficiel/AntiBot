@@ -18,26 +18,11 @@ public class Utils {
 	public static AntibotMode mode;
 
 	public static ArrayList<String> safeList = new ArrayList<>();
-	public static HashMap<String, String> safeListSQL = new HashMap<>();
 	public static ScheduledTask update;
 
 
 	public static void changeLevel(AntibotLevel level){
-		if(level==AntibotLevel.CAPTCHA){
-			safeList.clear();
-
-			for(Map.Entry<String, BungeePlayer> e : Main.playerCache.entrySet()){
-				if(e.getValue().getConnectedTime()>15*60||(new Date().getTime()-e.getValue().lastjointime)/1000>5*60){
-					safeList.add(e.getKey());
-				}
-			}
-		}else{
-			update.cancel();
-			safeList.clear();
-			safeListSQL.clear();
-		}
-
-
+		currentLevel = level;
 	}
 
 }
