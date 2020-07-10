@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="CoreBungee">
+    <CLASSES>
+      <root url="jar://D:/donnees/jars/plugins/CoreBungee.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
