@@ -1,62 +1,66 @@
 package fr.entasia.antibot.utils;
 
 import fr.entasia.antibot.Utils;
-import fr.entasia.antibot.tasks.PingsTask;
+import fr.entasia.antibot.tasks.PingTask;
 import fr.entasia.apis.other.ChatComponent;
+import fr.entasia.apis.utils.ServerUtils;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
 
 public enum AntibotLevel {
 
-	BLACKLIST_IPS(1){
+	IPS_BASIS(1, new ChatComponent(
+			"§cAntiBot :",
+			"§cUne attaque est en cours !",
+			"§cTon adresse IP à été détectée comme invalide (proxy/VPN ?)",
+			"§cS'il s'agit d'un faux positif, attend la fin de l'attaque pour te connecter (habituellement 2 minutes)")){
 		@Override
-		public ChatComponent apply(PendingConnection c) {
-			return null;
+		public BaseComponent[] verify(PendingConnection c) {
+			return msg;
 		}
 	},
-	PING(3){
+	PING(3, new ChatComponent(
+			"§cAntiBot :",
+			"§cUne attaque est en cours !",
+			"§cLes connexions directes au serveur (connexion rapide) ont été temporairement suspendues",
+			"§cAjoute le serveur à ta liste de serveurs pour te connecter")){
 		@Override
-		public ChatComponent apply(PendingConnection c) {
-			if(PingsTask.pings.remove(c.getAddress().getAddress().getAddress())==null) {
-				return new ChatComponent(
-						"§cAntiBot :",
-						"Une attaque est en cours !",
-						"Les connexions directes au serveur (connexion rapide) ont été temporairement suspendues",
-						"Ajoute le serveur à ta liste de serveurs pour vous connecter");
+		public BaseComponent[] verify(PendingConnection c) {
+			if(PingTask.pings.remove(c.getAddress().getAddress().getAddress())==null) {
+				return msg;
 			}else return null;
 		}
 	},
-	NAME_LEN(5){
+	NAME_LEN(5, new ChatComponent(
+			"§cAntiBot :",
+			"§cUne attaque est en cours !",
+			"§cTu as été détecté comme bot par le serveur",
+			"§cS'il s'agit d'un faux positif, attend la fin de l'attaque pour te connecter (habituellement 2 minutes)")){
 		@Override
-		public ChatComponent apply(PendingConnection c) {
+		public BaseComponent[] verify(PendingConnection c) {
 			String name = c.getName();
 			if (name.length() == 16) {
-				return new ChatComponent(
-						"§cAntiBot :",
-						"Une attaque est en cours !",
-						"Tu as été détecté comme bot par le serveur",
-						"S'il s'agit d'un faux positif, attend la fin de l'attaque pour te connecter (habituellement 2 minutes)");
+				return msg;
 			}else return null;
 		}
 	},
-	SAFELIST(7){
+	SAFELIST(7, new ChatComponent(
+			"§cAntiBot :",
+			"Une attaque est en cours !",
+			"Toutes les connexions au serveur ont été désactivées")){
 		@Override
-		public ChatComponent apply(PendingConnection c) {
+		public BaseComponent[] verify(PendingConnection c) {
 			if(Utils.safeList.contains(c.getName()))return null;
-			else{
-				return new ChatComponent(
-						"§cAntiBot :",
-						"Une attaque est en cours !",
-						"Toutes les connexions au serveur ont été désactivées");
-			}
+			else return msg;
 		}
 	},
-	HARD_SAFELIST(9){
+	HARD_SAFELIST(9, new ChatComponent(
+			"§cAntiBot :",
+			"Une attaque est en cours !",
+			"Les nouvelles connexions au serveur ont été temporairement suspendues")){
 		@Override
-		public ChatComponent apply(PendingConnection c) {
-			return new ChatComponent(
-					"§cAntiBot :",
-					"Une attaque est en cours !",
-					"Les nouvelles connexions au serveur ont été temporairement suspendues");
+		public BaseComponent[] verify(PendingConnection c) {
+			return msg;
 		}
 	},
 
@@ -64,15 +68,25 @@ public enum AntibotLevel {
 
 	public static AntibotLevel current;
 	public int id;
+	public BaseComponent[] msg;
 
-	AntibotLevel(int id){
+	AntibotLevel(int id, ChatComponent msg){
 		this.id = id;
+		this.msg = msg.create();
 	}
 
-	public abstract ChatComponent apply(PendingConnection c);
+	public abstract BaseComponent[] verify(PendingConnection c);
 
-	public static boolean isActive(){
-		return current !=null;
+	public static void set(AntibotLevel level){
+		AntibotLevel.current = level;
+		ServerUtils.permMsg("antibot.infos", "§4§lAntibot : §cPassage au niveau "+level+" !");
+	}
+
+	public static AntibotLevel getByID(int id){
+		for(AntibotLevel lvl : values()){
+			if(lvl.id==id)return lvl;
+		}
+		return null;
 	}
 
 	/*
@@ -84,23 +98,23 @@ public enum AntibotLevel {
 	- safelists checks
 	 */
 
-	public static ChatComponent check(PendingConnection c){
+	public static BaseComponent[] check(PendingConnection c){
 
 		if(AntibotLevel.current == SAFELIST||AntibotLevel.current == AntibotLevel.HARD_SAFELIST){
-			return AntibotLevel.current.apply(c);
+			return AntibotLevel.current.verify(c);
 		}else{
-			ChatComponent cc;
+			BaseComponent[] cc;
 			switch(current){
 				case NAME_LEN:{
-					cc = NAME_LEN.apply(c);
+					cc = NAME_LEN.verify(c);
 					if(cc!=null)return cc;
 				}
 				case PING:{
-					cc = PING.apply(c);
+					cc = PING.verify(c);
 					if(cc!=null)return cc;
 				}
-				case BLACKLIST_IPS: {
-					cc = BLACKLIST_IPS.apply(c);
+				case IPS_BASIS: {
+					cc = IPS_BASIS.verify(c);
 					if(cc!=null)return cc;
 				}
 			}

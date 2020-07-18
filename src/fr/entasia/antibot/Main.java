@@ -1,28 +1,33 @@
 package fr.entasia.antibot;
 
+import fr.entasia.antibot.tasks.ConnectTask;
+import fr.entasia.antibot.tasks.PingTask;
 import fr.entasia.antibot.tools.AntibotCmd;
+import fr.entasia.antibot.tools.Listeners;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.scheduler.TaskScheduler;
+import net.md_5.bungee.api.scheduler.ScheduledTask;
+
+import java.util.concurrent.TimeUnit;
 
 public class Main extends Plugin {
 
 	public static Main main;
 
-	//tasks
-	public static TaskScheduler pingTask;
+	//tasks ScheduledTask
+	public static ScheduledTask pingTask;
+	public static ScheduledTask connectTask;
 
 	@Override
 	public void onEnable() {
 		try{
 			main = this;
-			getProxy().getPluginManager().registerCommand(this, new AntibotCmd("antibot"));
 
-//			pingTask = new Runnable() {
-//				@Override
-//				public void run() {
-//
-//				}
-//			}
+			getProxy().getPluginManager().registerCommand(this, new AntibotCmd("antibot"));
+			getProxy().getPluginManager().registerListener(this, new Listeners());
+
+			pingTask = getProxy().getScheduler().schedule(this, new PingTask(), 0, 6, TimeUnit.SECONDS);
+			connectTask = getProxy().getScheduler().schedule(this, new ConnectTask(), 0, 1, TimeUnit.SECONDS);
+
 
 		}catch(Throwable e){
 			e.printStackTrace();
@@ -30,4 +35,9 @@ public class Main extends Plugin {
 			getProxy().stop();
 		}
 	}
+
+//	public static void main(String[] as) throws Exception {
+//		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/?useSSL=false", "root", "azerty123");
+//		connection.setAutoCommit();
+//	}
 }

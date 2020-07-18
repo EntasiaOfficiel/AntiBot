@@ -2,4 +2,4 @@ name: AntiBot
 version: '-1'
 author: iTrooz_
 main: fr.entasia.antibot.Main
-depends: [Libraries, CoreBungee]
+depends: [Libraries]

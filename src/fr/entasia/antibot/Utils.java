@@ -1,6 +1,5 @@
 package fr.entasia.antibot;
 
-import fr.entasia.antibot.utils.AntibotLevel;
 import fr.entasia.antibot.utils.AntibotMode;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 
@@ -12,10 +11,5 @@ public class Utils {
 
 	public static ArrayList<String> safeList = new ArrayList<>();
 	public static ScheduledTask update;
-
-
-	public static void changeLevel(AntibotLevel level){
-		AntibotLevel.current = level;
-	}
 
 }
