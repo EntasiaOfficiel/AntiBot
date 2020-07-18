@@ -12,7 +12,7 @@ public class AntibotCmd extends Command {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if(sender.hasPermission("admin.antibot")) {
+		if(sender.hasPermission("antibot.admin")) {
 			if(args.length==0){
 				sender.sendMessage(ChatComponent.create("§cArguments disponibles :"));
 			}else {

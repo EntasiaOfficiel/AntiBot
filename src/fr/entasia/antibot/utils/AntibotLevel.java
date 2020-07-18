@@ -16,10 +16,10 @@ public enum AntibotLevel {
 			"§cS'il s'agit d'un faux positif, attend la fin de l'attaque pour te connecter (habituellement 2 minutes)")){
 		@Override
 		public BaseComponent[] verify(PendingConnection c) {
-			return msg;
+			return null;
 		}
 	},
-	PING(3, new ChatComponent(
+	PING(2, new ChatComponent(
 			"§cAntiBot :",
 			"§cUne attaque est en cours !",
 			"§cLes connexions directes au serveur (connexion rapide) ont été temporairement suspendues",
@@ -31,7 +31,7 @@ public enum AntibotLevel {
 			}else return null;
 		}
 	},
-	NAME_LEN(5, new ChatComponent(
+	NAME_LEN(3, new ChatComponent(
 			"§cAntiBot :",
 			"§cUne attaque est en cours !",
 			"§cTu as été détecté comme bot par le serveur",
@@ -44,7 +44,7 @@ public enum AntibotLevel {
 			}else return null;
 		}
 	},
-	SAFELIST(7, new ChatComponent(
+	SAFELIST(4, new ChatComponent(
 			"§cAntiBot :",
 			"Une attaque est en cours !",
 			"Toutes les connexions au serveur ont été désactivées")){
@@ -54,7 +54,7 @@ public enum AntibotLevel {
 			else return msg;
 		}
 	},
-	HARD_SAFELIST(9, new ChatComponent(
+	HARD_SAFELIST(5, new ChatComponent(
 			"§cAntiBot :",
 			"Une attaque est en cours !",
 			"Les nouvelles connexions au serveur ont été temporairement suspendues")){
@@ -104,6 +104,8 @@ public enum AntibotLevel {
 			return AntibotLevel.current.verify(c);
 		}else{
 			BaseComponent[] cc;
+			System.out.println("active="+AntibotMode.isActive());
+			System.out.println("current="+current);
 			switch(current){
 				case NAME_LEN:{
 					cc = NAME_LEN.verify(c);
