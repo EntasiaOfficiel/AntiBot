@@ -78,6 +78,7 @@ public enum AntibotLevel {
 	public abstract BaseComponent[] verify(PendingConnection c);
 
 	public static void set(AntibotLevel level){
+		if(current==level)return;
 		AntibotLevel.current = level;
 		ServerUtils.permMsg("antibot.infos", "§4§lAntibot : §cPassage au niveau "+level+" !");
 	}

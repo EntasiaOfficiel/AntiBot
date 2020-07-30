@@ -4,15 +4,16 @@ import fr.entasia.apis.utils.ServerUtils;
 
 public enum AntibotMode { // a voir pour ajouter SLEEP ?
 	OFF,
+	STABILISING,
 	ON,
-	STRICT
 
 	;
 
 	public static AntibotMode current = OFF;
 
 	public static void set(AntibotMode mode){
-		AntibotMode.current = mode;
+		if(current==mode)return;
+		current = mode;
 		ServerUtils.permMsg("antibot.infos", "§4§lAntibot : §cPassage au mode "+mode+" !");
 	}
 

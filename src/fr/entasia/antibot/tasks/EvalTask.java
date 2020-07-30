@@ -1,5 +1,7 @@
 package fr.entasia.antibot.tasks;
 
+import fr.entasia.antibot.Utils;
+import fr.entasia.antibot.tools.Listeners;
 import fr.entasia.antibot.utils.AntibotLevel;
 import fr.entasia.antibot.utils.AntibotMode;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -7,31 +9,39 @@ import net.md_5.bungee.api.connection.PendingConnection;
 
 import java.util.ArrayList;
 
-public class ConnectTask implements Runnable {
+public class EvalTask implements Runnable {
 
 	public static ArrayList<PendingConnection> connects = new ArrayList<>();
+	public static int wouldConnect;
 	public static int reminder = 0;
 
 	@Override
 	public void run() {
-		if(connects.size()>8){
+		if (connects.size() > 8) {
 			reminder = 20;
-		}else if(connects.size()>=5){
-			reminder+=10;
-		}else if(AntibotMode.isActive()){
-			reminder-=3;
-		}else return;
+		} else if (connects.size() >= 5) {
+			reminder += 10;
+		} else if (AntibotMode.isActive()) {
+			reminder -= 3;
+		} else {
+			for (PendingConnection pd : connects) {
+				if (Utils.safeList.contains(pd.getName())) continue;
+				Utils.safeList.add(pd.getName());
+			}
+			connects.clear();
+			return;
+		}
 
 		System.out.println("reminder at "+reminder);
 
-		if(connects.size()>30){
-			if(AntibotMode.current==AntibotMode.ON)AntibotMode.set(AntibotMode.STRICT);
-		}else if(AntibotMode.current==AntibotMode.STRICT)AntibotMode.set(AntibotMode.ON);
-
 		connects.clear();
+		wouldConnect = 0;
 
 		if(reminder>=20) upgrade();
-		else if(reminder<=0) degrade(); // TODO tout désactiver plutôt ?
+		else if(reminder<=-20) degrade(); // TODO tout désactiver plutôt ?
+		else if(reminder<=0&&AntibotMode.current==AntibotMode.STABILISING){
+			AntibotMode.set(AntibotMode.ON);
+		}
 		else return;
 		reminder = 10;
 
@@ -39,8 +49,7 @@ public class ConnectTask implements Runnable {
 	}
 
 	private static void degrade(){
-		System.out.println("a");
-		if(AntibotMode.current==AntibotMode.STRICT)return;
+		System.out.println("degrade...");
 		System.out.println(AntibotLevel.current);
 		if(AntibotLevel.current==AntibotLevel.IPS_BASIS){
 			System.out.println("DEGRADING");
@@ -54,13 +63,14 @@ public class ConnectTask implements Runnable {
 	private static void upgrade(){
 		System.out.println("upgrade...");
 		if(AntibotMode.current==AntibotMode.OFF){
-			AntibotMode.set(AntibotMode.ON);
+			AntibotMode.set(AntibotMode.STABILISING);
 			AntibotLevel.set(AntibotLevel.IPS_BASIS);
-			BaseComponent[] bc;
+//			BaseComponent[] bc;
 			for(PendingConnection c : connects){
 				if(c.isConnected()){
-					bc = AntibotLevel.IPS_BASIS.verify(c);
-					if(bc!=null)c.disconnect(bc);
+					c.disconnect(Listeners.stabilising.create());
+//					bc = AntibotLevel.IPS_BASIS.verify(c);
+//					if(bc!=null)c.disconnect(bc);
 				}
 			}
 		}else{

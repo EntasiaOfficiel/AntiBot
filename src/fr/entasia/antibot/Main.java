@@ -1,6 +1,6 @@
 package fr.entasia.antibot;
 
-import fr.entasia.antibot.tasks.ConnectTask;
+import fr.entasia.antibot.tasks.EvalTask;
 import fr.entasia.antibot.tasks.PingTask;
 import fr.entasia.antibot.tools.AntibotCmd;
 import fr.entasia.antibot.tools.Listeners;
@@ -26,7 +26,7 @@ public class Main extends Plugin {
 			getProxy().getPluginManager().registerListener(this, new Listeners());
 
 			pingTask = getProxy().getScheduler().schedule(this, new PingTask(), 0, 6, TimeUnit.SECONDS);
-			connectTask = getProxy().getScheduler().schedule(this, new ConnectTask(), 0, 1, TimeUnit.SECONDS);
+			connectTask = getProxy().getScheduler().schedule(this, new EvalTask(), 0, 1, TimeUnit.SECONDS);
 
 
 		}catch(Throwable e){
