@@ -28,7 +28,7 @@ public class Listeners implements Listener {
 				if(AntibotMode.current==AntibotMode.STABILISING) {
 					e.setCancelled(true);
 					e.setCancelReason(stabilising.create());
-					EvalTask.wouldConnect++;
+					EvalTask.connectAfter++;
 				}
 			}else{
 				e.setCancelled(true);
@@ -41,7 +41,7 @@ public class Listeners implements Listener {
 
 	@EventHandler(priority = 127)
 	public void a(PostLoginEvent e) {
-		EvalTask.connects.add(e.getPlayer().getPendingConnection());
+		EvalTask.connectAfter.add(e.getPlayer().getPendingConnection());
 	}
 
 	@EventHandler(priority = -128)

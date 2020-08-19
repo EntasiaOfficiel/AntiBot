@@ -9,16 +9,16 @@ import net.md_5.bungee.api.connection.PendingConnection;
 
 public enum AntibotLevel {
 
-	IPS_BASIS(1, new ChatComponent(
-			"§cAntiBot :",
-			"§cUne attaque est en cours !",
-			"§cTon adresse IP à été détectée comme invalide (proxy/VPN ?)",
-			"§cS'il s'agit d'un faux positif, attend la fin de l'attaque pour te connecter (habituellement 2 minutes)")){
-		@Override
-		public BaseComponent[] verify(PendingConnection c) {
-			return null;
-		}
-	},
+//	IPS_BASIS(1, new ChatComponent(
+//			"§cAntiBot :",
+//			"§cUne attaque est en cours !",
+//			"§cTon adresse IP à été détectée comme invalide (proxy/VPN ?)",
+//			"§cS'il s'agit d'un faux positif, attend la fin de l'attaque pour te connecter (habituellement 2 minutes)")){
+//		@Override
+//		public BaseComponent[] verify(PendingConnection c) {
+//			return null;
+//		}
+//	},
 	PING(2, new ChatComponent(
 			"§cAntiBot :",
 			"§cUne attaque est en cours !",
@@ -31,7 +31,13 @@ public enum AntibotLevel {
 			}else return null;
 		}
 	},
-	NAME_LEN(3, new ChatComponent(
+	PREMIUM(4) {
+		@Override
+		public BaseComponent[] verify(PendingConnection c) {
+			return null;
+		}
+	},
+	NAME_LEN(6, new ChatComponent(
 			"§cAntiBot :",
 			"§cUne attaque est en cours !",
 			"§cTu as été détecté comme bot par le serveur",
@@ -44,7 +50,7 @@ public enum AntibotLevel {
 			}else return null;
 		}
 	},
-	SAFELIST(4, new ChatComponent(
+	SAFELIST(8, new ChatComponent(
 			"§cAntiBot :",
 			"Une attaque est en cours !",
 			"Toutes les connexions au serveur ont été désactivées")){
@@ -54,7 +60,7 @@ public enum AntibotLevel {
 			else return msg;
 		}
 	},
-	HARD_SAFELIST(5, new ChatComponent(
+	HARD_SAFELIST(10, new ChatComponent(
 			"§cAntiBot :",
 			"Une attaque est en cours !",
 			"Les nouvelles connexions au serveur ont été temporairement suspendues")){
