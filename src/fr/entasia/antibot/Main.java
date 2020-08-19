@@ -4,6 +4,7 @@ import fr.entasia.antibot.tasks.EvalTask;
 import fr.entasia.antibot.tasks.PingTask;
 import fr.entasia.antibot.tools.AntibotCmd;
 import fr.entasia.antibot.tools.Listeners;
+import fr.entasia.apis.other.ChatComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 
@@ -16,6 +17,11 @@ public class Main extends Plugin {
 	//tasks ScheduledTask
 	public static ScheduledTask pingTask;
 	public static ScheduledTask connectTask;
+
+	public static final ChatComponent baseMsg = new ChatComponent(
+			"§cAntiBot :",
+			"Une attaque est en cours !");
+
 
 	@Override
 	public void onEnable() {
