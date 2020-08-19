@@ -1,91 +1,93 @@
 package fr.entasia.antibot.tasks;
 
-import fr.entasia.antibot.Utils;
+import fr.entasia.antibot.AntibotAPI;
 import fr.entasia.antibot.tools.Listeners;
 import fr.entasia.antibot.utils.AntibotLevel;
 import fr.entasia.antibot.utils.AntibotMode;
+import fr.entasia.apis.other.ChatComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class EvalTask implements Runnable {
 
-	public static ArrayList<PendingConnection> connectAfter = new ArrayList<>();
+
+	public static ArrayList<String> ips = new ArrayList<>();
+	public static ArrayList<ProxiedPlayer> connectAfter = new ArrayList<>();
+	public static HashSet<String> safeList = new HashSet<>();
 	public static int connectBefore;
-	public static int reminder = 0;
+	public static int reminder;
+
+	/*
+	6 : sur d'une attaque
+	< 4 : sûr qu'il n'y a pas d'attaque
+	entre les deux : zone floue
+	 */
 
 	@Override
 	public void run() {
-		int connect;
-		if(AntibotMode.current==AntibotMode.STABILISING){
-			connect = connectAfter.size();
-		}else{
-			connect = connectBefore;
-		}
 
-		if (connect > 8) {
+		// update reminder
+		if (connectAfter.size() >= 6) {
 			reminder += 25;
-		} else if (connect >= 5) {
-			reminder += 10;
-		} else{
-			if (AntibotMode.isActive()) {
-				reminder -= 3;
-			} else {
-				for (PendingConnection pd : connectAfter) {
-					if (Utils.safeList.contains(pd.getName())) continue;
-					Utils.safeList.add(pd.getName());
-				}
-				connectAfter.clear();
-				return;
-			}
+		}else if(connectBefore < 4 && AntibotMode.current == AntibotMode.ON){
+			reminder-=3;
+		}else{
+			reminder = 0;
 		}
 
 		System.out.println("reminder at "+reminder);
 
-		connectAfter.clear();
-
-		if(reminder>=20) upgrade();
-		else if(reminder<=-30){
-			AntibotLevel.current = null;
-			AntibotMode.set(AntibotMode.OFF);
+		// take reminder actions
+		if(reminder>=20){
+			upgrade();
+			reminder = 0;
 		}else{
-			if(AntibotMode.current==AntibotMode.STABILISING&&connect<6){
-
+			if(reminder<=-30){
+				AntibotLevel.current = null;
+				AntibotMode.set(AntibotMode.OFF);
+				reminder = 0;
+			}else{
+				if(AntibotMode.current==AntibotMode.STABILISING&&connectAfter.size()<6){
+					AntibotMode.set(AntibotMode.ON);
+				}
 			}
-			return;
 		}
-		reminder = 0;
+
+		// others
+		if(!AntibotAPI.isActive()&&connectBefore<4){
+			addToSafelist();
+		}
+
+		connectBefore = 0;
+		connectAfter.clear();
 	}
 
-//	private static void degrade(){
-//		System.out.println("degrade...");
-//		System.out.println(AntibotLevel.current);
-//		if(AntibotLevel.current==AntibotLevel.IPS_BASIS){
-//			System.out.println("DEGRADING");
-//			AntibotLevel.current = null;
-//			AntibotMode.set(AntibotMode.OFF);
-//		}else{
-//			AntibotLevel.set(AntibotLevel.getByID(AntibotLevel.current.id-1));
-//		}
-//	}
+	public static void addToSafelist(){
+		for (ProxiedPlayer p : connectAfter) {
+			if (safeList.contains(p.getName())) continue;
+			safeList.add(p.getName());
+		}
+	}
 
 	private static void upgrade(){
-		System.out.println("upgrade...");
 		if(AntibotMode.current==AntibotMode.OFF){
 			AntibotMode.set(AntibotMode.STABILISING);
-			AntibotLevel.set(AntibotLevel.IPS_BASIS);
+			AntibotLevel.set(AntibotLevel.lowest());
 //			BaseComponent[] bc;
-			for(PendingConnection c : connectAfter){
-				if(c.isConnected()){
-					c.disconnect(Listeners.stabilising.create());
+			for(ProxiedPlayer p : connectAfter){
+				if(p.isConnected()){
+					p.addGroups("bot");
+					p.disconnect(Listeners.stabilising);
 //					bc = AntibotLevel.IPS_BASIS.verify(c);
 //					if(bc!=null)c.disconnect(bc);
 				}
 			}
 		}else{
-			if(AntibotLevel.current==AntibotLevel.HARD_SAFELIST)return;
+			if(AntibotLevel.current==AntibotLevel.highest())return;
 			AntibotLevel.set(AntibotLevel.getByID(AntibotLevel.current.id+1));
 		}
-		System.out.println("upgrading to "+AntibotLevel.current);
 	}
 }

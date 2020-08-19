@@ -7,7 +7,9 @@ import fr.entasia.antibot.tasks.PingTask;
 import fr.entasia.antibot.utils.AntibotLevel;
 import fr.entasia.antibot.utils.AntibotMode;
 import fr.entasia.apis.other.ChatComponent;
+import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
@@ -37,17 +39,32 @@ public class Listeners implements Listener {
 		}
 	}
 
-	// "Si tu veux te connecter, va sur §bhttps://enta§7sia.fr/captcha.php"
-
 	@EventHandler(priority = 127)
 	public void a(PostLoginEvent e) {
 		EvalTask.connectAfter.add(e.getPlayer());
 	}
 
+	static{
+		String a = "§cEntasia : le serveur est sous attaque bot !\n";
+		textOn = new TextComponent(a+"§cStabilisation en cours...");
+		textStab = new TextComponent(a+"§cSystème antibot actif !");
+
+	}
+
+	public static BaseComponent textOn;
+	public static BaseComponent textStab;
+
 	@EventHandler(priority = -128)
 	public void a(ProxyPingEvent e) {
-		if (AntibotLevel.current == AntibotLevel.PING || AntibotLevel.current == AntibotLevel.NAME_LEN) {
-			PingTask.pings.put(e.getConnection().getAddress().getAddress().getAddress(), System.currentTimeMillis());
+		if(AntibotAPI.isActive()){
+			ServerPing ping = e.getResponse();
+			if(AntibotMode.current==AntibotMode.ON) ping.setDescriptionComponent(textOn);
+			else ping.setDescriptionComponent(textStab);
+			e.setResponse(ping);
+			if (AntibotLevel.current.protocol==1) {
+				PingTask.pings.put(Main.hashIP(e.getConnection().getAddress().getAddress().getAddress()), System.currentTimeMillis());
+				System.out.println(PingTask.pings.size());
+			}
 		}
 	}
 }

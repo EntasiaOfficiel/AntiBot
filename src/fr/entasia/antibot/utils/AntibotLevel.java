@@ -9,6 +9,8 @@ import fr.entasia.apis.utils.ServerUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
 
+import java.util.Arrays;
+
 public enum AntibotLevel {
 
 //	IPS_BASIS(1, new ChatComponent(
@@ -19,17 +21,24 @@ public enum AntibotLevel {
 //			return null;
 //		}
 //	},
-	PING(1, new ChatComponent(
-			"§cLes connexions directes au serveur (connexion rapide) ont été temporairement suspendues",
+	PING(1, 1, new ChatComponent(
+			"§cLes connexions directes au serveur (connexion rapide) ont été temporairement suspendues (ping first)",
 			"§cAjoute le serveur à ta liste de serveurs pour te connecter")){
 		@Override
 		public BaseComponent[] verify(PendingConnection c) {
-			if(PingTask.pings.remove(c.getAddress().getAddress().getAddress())==null) {
+
+//			System.out.println("check for "+ Arrays.toString(c.getAddress().getAddress().getAddress()));
+//			for(byte[] a : PingTask.pings.keySet()){
+//				System.out.println("array contains "+ Arrays.toString(a));
+//			}
+			if(PingTask.pings.remove(Main.hashIP(c.getAddress().getAddress().getAddress()))==null) {
 				return msg;
-			}else return null;
+			}else{
+				return null;
+			}
 		}
 	},
-	NAME_LEN(2, new ChatComponent(
+	NAME_LEN(2, 1, new ChatComponent(
 			"§cTu as été détecté comme bot par le serveur",
 			"§cS'il s'agit d'un faux positif, attend la fin de l'attaque pour te connecter (habituellement 2 minutes)")){
 		@Override
@@ -40,25 +49,25 @@ public enum AntibotLevel {
 			}else return null;
 		}
 	},
-	PREMIUM(3,
-			new ChatComponent("§cLes comptes craqués ont été suspendus jusqu'a la fin de l'attaque",
+	PREMIUM(3, 1, new ChatComponent(
+			"§cLes comptes craqués ont été suspendus jusqu'a la fin de l'attaque",
 			"§cAttend quelques minutes pour pouvoir te connecter")){
 		@Override
-		public BaseComponent[] verify(PendingConnection c) { // TODO HARDCODER UN CHECK POUR VOIR S'IL EST KICK
+		public BaseComponent[] verify(PendingConnection c) { // TODO HARDCODER UN CHECK POUR VOIR S'IL EST KICK ET ENVOYER LE MESSAGE LA PROCHAINE FOIS
 			c.setOnlineMode(true);
 			return null;
 		}
 	},
-	SAFELIST(4, new ChatComponent(
-			"Toutes les connexions au serveur ont été désactivées")){
+	SAFELIST(4, 2, new ChatComponent(
+			"Toutes les nouvelles connexions au serveur ont été temporairement suspendues")){
 		@Override
 		public BaseComponent[] verify(PendingConnection c) {
 			if(EvalTask.safeList.contains(c.getName()))return null;
 			else return msg;
 		}
 	},
-	HARD_SAFELIST(5, new ChatComponent(
-			"Les nouvelles connexions au serveur ont été temporairement suspendues")){
+	HARD_SAFELIST(5, 2, new ChatComponent(
+			"Toutes les nouvelles connexions au serveur ont été temporairement suspendues")){
 		@Override
 		public BaseComponent[] verify(PendingConnection c) {
 			return msg;
@@ -69,15 +78,16 @@ public enum AntibotLevel {
 
 	public static AntibotLevel current;
 	public int id;
+	public int protocol;
 	public BaseComponent[] msg;
 
-	AntibotLevel(int id, ChatComponent msg){
+	AntibotLevel(int id, int protocol, ChatComponent msg){
 		this.id = id;
+		this.protocol = protocol;
 		this.msg = msg.insertFirst(Main.baseMsg).create();
 	}
 
 	public abstract BaseComponent[] verify(PendingConnection c);
-
 
 
 	public static void set(AntibotLevel level){
@@ -118,6 +128,9 @@ public enum AntibotLevel {
 		}else{
 			BaseComponent[] cc;
 			switch(current){
+				case PREMIUM:{
+					PREMIUM.verify(c);
+				}
 				case NAME_LEN:{
 					cc = NAME_LEN.verify(c);
 					if(cc!=null)return cc;

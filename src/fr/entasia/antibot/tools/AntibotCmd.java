@@ -23,11 +23,11 @@ public class AntibotCmd extends Command {
 				args[0] = args[0].toLowerCase();
 				switch(args[0]){
 					case "info":{
-						sender.sendMessage("§cInformations sur l'antibot :");
-						sender.sendMessage("§c- Mode : "+ AntibotMode.current);
-						sender.sendMessage("§c- Level : "+ AntibotLevel.current);
-						sender.sendMessage("§c- Reminder : "+ EvalTask.reminder);
-						sender.sendMessage("§c- Taille Safelist : "+ EvalTask.safeList);
+						sender.sendMessage(ChatComponent.create("§cInformations sur l'antibot :"));
+						sender.sendMessage(ChatComponent.create("§c- Mode : "+ AntibotMode.current));
+						sender.sendMessage(ChatComponent.create("§c- Level : "+ AntibotLevel.current));
+						sender.sendMessage(ChatComponent.create("§c- Reminder : "+ EvalTask.reminder));
+						sender.sendMessage(ChatComponent.create("§c- Taille Safelist : "+ EvalTask.safeList));
 						break;
 					}
 					default:{
