@@ -38,7 +38,7 @@ public class EvalTask implements Runnable {
 			reminder = 0;
 		}
 
-		System.out.println("reminder at "+reminder);
+//		System.out.println("reminder at "+reminder);
 
 		// take reminder actions
 		if(reminder>=20){

@@ -27,10 +27,6 @@ public enum AntibotLevel {
 		@Override
 		public BaseComponent[] verify(PendingConnection c) {
 
-//			System.out.println("check for "+ Arrays.toString(c.getAddress().getAddress().getAddress()));
-//			for(byte[] a : PingTask.pings.keySet()){
-//				System.out.println("array contains "+ Arrays.toString(a));
-//			}
 			if(PingTask.pings.remove(Main.hashIP(c.getAddress().getAddress().getAddress()))==null) {
 				return msg;
 			}else{

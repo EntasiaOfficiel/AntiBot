@@ -63,7 +63,6 @@ public class Listeners implements Listener {
 			e.setResponse(ping);
 			if (AntibotLevel.current.protocol==1) {
 				PingTask.pings.put(Main.hashIP(e.getConnection().getAddress().getAddress().getAddress()), System.currentTimeMillis());
-				System.out.println(PingTask.pings.size());
 			}
 		}
 	}

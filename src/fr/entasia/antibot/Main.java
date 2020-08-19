@@ -42,13 +42,6 @@ public class Main extends Plugin {
 		}
 	}
 
-//	public static void main(String[] as) throws Throwable {
-//		byte[] a = new byte[]{5, 6, 7, 8};
-//		byte[] b = new byte[]{5, 6, 7, 8};
-//		System.out.println(hashIP(a));
-//		System.out.println(hashIP(b));
-//	}
-
 	public static int hashIP(byte[] list){
 		int a = 0;
 		for(byte b : list){
