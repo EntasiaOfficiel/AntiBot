@@ -1,6 +1,5 @@
 package fr.entasia.antibot.utils;
 
-import fr.entasia.antibot.AntibotAPI;
 import fr.entasia.antibot.Main;
 import fr.entasia.antibot.tasks.EvalTask;
 import fr.entasia.antibot.tasks.PingTask;
@@ -8,8 +7,6 @@ import fr.entasia.apis.other.ChatComponent;
 import fr.entasia.apis.utils.ServerUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
-
-import java.util.Arrays;
 
 public enum AntibotLevel {
 

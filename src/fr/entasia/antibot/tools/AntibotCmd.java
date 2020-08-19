@@ -15,7 +15,7 @@ public class AntibotCmd extends Command {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if(sender.hasPermission("antibot.admin")) {
+		if(sender.hasPermission("restricted.antibot")) {
 			if(args.length==0){
 				sender.sendMessage(ChatComponent.create("§cArguments disponibles :"));
 				sender.sendMessage(ChatComponent.create("§c- info"));

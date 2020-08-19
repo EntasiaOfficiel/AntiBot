@@ -4,8 +4,6 @@ import fr.entasia.antibot.AntibotAPI;
 import fr.entasia.antibot.tools.Listeners;
 import fr.entasia.antibot.utils.AntibotLevel;
 import fr.entasia.antibot.utils.AntibotMode;
-import fr.entasia.apis.other.ChatComponent;
-import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.ArrayList;
