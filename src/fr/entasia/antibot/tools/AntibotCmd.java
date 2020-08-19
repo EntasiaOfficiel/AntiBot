@@ -27,7 +27,7 @@ public class AntibotCmd extends Command {
 						sender.sendMessage(ChatComponent.create("§c- Mode : "+ AntibotMode.current));
 						sender.sendMessage(ChatComponent.create("§c- Level : "+ AntibotLevel.current));
 						sender.sendMessage(ChatComponent.create("§c- Reminder : "+ EvalTask.reminder));
-						sender.sendMessage(ChatComponent.create("§c- Taille Safelist : "+ EvalTask.safeList));
+						sender.sendMessage(ChatComponent.create("§c- Taille Safelist : "+ EvalTask.safeList.size()));
 						break;
 					}
 					default:{
